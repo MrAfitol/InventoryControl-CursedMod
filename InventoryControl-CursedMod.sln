@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryControl-CursedMod", "InventoryControl-CursedMod\InventoryControl-CursedMod.csproj", "{0EE870F8-7144-486A-A5CC-F1233641BFF5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EE870F8-7144-486A-A5CC-F1233641BFF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EE870F8-7144-486A-A5CC-F1233641BFF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EE870F8-7144-486A-A5CC-F1233641BFF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EE870F8-7144-486A-A5CC-F1233641BFF5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AFA3A3BA-802C-469B-9111-94ECB1552309}
+	EndGlobalSection
+EndGlobal
