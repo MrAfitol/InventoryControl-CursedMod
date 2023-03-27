@@ -6,14 +6,12 @@
     using CursedMod.Features.Wrappers.Inventory.Items.Firearms;
     using CursedMod.Features.Wrappers.Player;
     using CursedMod.Features.Wrappers.Round;
-    using InventorySystem.Items.Firearms;
-    using InventorySystem.Items.Firearms.Attachments;
     using MEC;
-    using PlayerRoles;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Random = UnityEngine.Random;
+    using InventorySystem;
 
     public class EventHandlers
     {
@@ -24,10 +22,15 @@
                 if (ev.Player == null || !CursedRound.HasStarted) return;
 
                 if (Plugin.Instance.Config.InventoryRank?.Count > 0)
-                    if (Plugin.Instance.Config.InventoryRank.ContainsKey(GetPlayerGroupName(ev.Player))) { SetRankRoleItem(ev.Player, ev.NewRole, GetPlayerGroupName(ev.Player)); return; }
+                    if (Plugin.Instance.Config.InventoryRank.ContainsKey(GetPlayerGroupName(ev.Player)))
+                        if (Plugin.Instance.Config.InventoryRank[GetPlayerGroupName(ev.Player)].TryGetValue(ev.NewRole, out InventoryItem inventoryRankItem))
+                        {
+                            SetRoleItem(ev.Player, inventoryRankItem);
+                            return;
+                        }
 
                 if (Plugin.Instance.Config.Inventory?.Count > 0)
-                    if (Plugin.Instance.Config.Inventory.ContainsKey(ev.NewRole)) SetRoleItem(ev.Player, ev.NewRole);
+                    if (Plugin.Instance.Config.Inventory.TryGetValue(ev.NewRole, out InventoryItem inventoryItem)) SetRoleItem(ev.Player, inventoryItem);
             }
             catch (Exception e)
             {
@@ -35,41 +38,39 @@
             }
         }
 
-        private void SetRoleItem(CursedPlayer player, RoleTypeId newRole)
+        private void SetRoleItem(CursedPlayer player, InventoryItem inventoryItem)
         {
-            Timing.CallDelayed(0.1f, () =>
+            Timing.CallDelayed(0.3f, () =>
             {
                 try
                 {
-                    if (!Plugin.Instance.Config.Inventory.TryGetValue(newRole, out InventoryItem inventoryItem)) return;
-
                     Dictionary<ItemType, ushort> Ammos = new Dictionary<ItemType, ushort>();
 
-                    foreach (KeyValuePair<ItemType, ushort> item in player.ReferenceHub.inventory.UserInventory.ReserveAmmo)
+                    foreach (KeyValuePair<ItemType, ushort> item in player.Ammo)
                         Ammos.Add(item.Key, item.Value);
 
                     for (int ammo = 0; ammo < player.ReferenceHub.inventory.UserInventory.ReserveAmmo.Count; ammo++)
                         player.SetAmmo(player.ReferenceHub.inventory.UserInventory.ReserveAmmo.ElementAt(ammo).Key, 0);
 
+                    int itemCount = player.ReferenceHub.inventory.UserInventory.Items.Count;
+
                     if (!inventoryItem.keepItems)
-                        player.ClearInventory(false);
+                    {
+                        var inventory = player.ReferenceHub.inventory.UserInventory;
+                        while (inventory.Items.Count > 0)
+                        {
+                            player.ReferenceHub.inventory.ServerRemoveItem(inventory.Items.ElementAt(0).Key, null);
+                        }
+                    }
 
                     foreach (KeyValuePair<ItemType, int> Item in inventoryItem.Items)
                         if (Item.Value >= Random.Range(0, 101))
                         {
+                            if (player.ReferenceHub.inventory.UserInventory.Items.Count >= 8) return;
+
                             CursedItem itemBase = player.AddItem(Item.Key);
 
-                            if (itemBase is CursedFirearmItem firearm)
-                            {
-                                if (AttachmentsServerHandler.PlayerPreferences.TryGetValue(player.ReferenceHub, out var value) && value.TryGetValue(itemBase.ItemType, out var value2))
-                                    firearm.FirearmBase.ApplyAttachmentsCode(value2, reValidate: true);
-
-                                FirearmStatusFlags firearmStatusFlags = FirearmStatusFlags.MagazineInserted;
-                                if (firearm.FirearmBase.HasAdvantageFlag(AttachmentDescriptiveAdvantages.Flashlight))
-                                    firearmStatusFlags |= FirearmStatusFlags.FlashlightEnabled;
-
-                                firearm.Status = new FirearmStatus(firearm.AmmoManagerModule.MaxAmmo, firearmStatusFlags, firearm.FirearmBase.GetCurrentAttachmentsCode());
-                            }
+                            if (itemBase is CursedFirearmItem firearm) firearm.SetPlayerAttachments(player);
                         }
 
                     for (int ammo = 0; ammo < Ammos.Count; ammo++)
@@ -79,44 +80,6 @@
                 catch (Exception e)
                 {
                     CursedLogger.LogError("[InventoryControl] [Event: SetRoleItem] " + e.ToString());
-                }
-            });
-        }
-
-        private void SetRankRoleItem(CursedPlayer player, RoleTypeId newRole, string groupName)
-        {
-            Timing.CallDelayed(0.1f, () =>
-            {
-                try
-                {
-                    if (Plugin.Instance.Config.InventoryRank.TryGetValue(groupName, out Dictionary<RoleTypeId, InventoryItem> rankItems))
-                    {
-                        if (!rankItems.TryGetValue(newRole, out InventoryItem inventoryItem)) return;
-
-                        Dictionary<ItemType, ushort> Ammos = new Dictionary<ItemType, ushort>();
-
-                        foreach (KeyValuePair<ItemType, ushort> item in player.Ammo)
-                            Ammos.Add(item.Key, item.Value);
-
-                        if (!inventoryItem.keepItems)
-                            player.ClearInventory(false);
-
-                        foreach (KeyValuePair<ItemType, int> Item in inventoryItem.Items)
-                            if (Item.Value >= Random.Range(0, 101))
-                            {
-                                CursedItem itemBase = player.AddItem(Item.Key);
-
-                                if (itemBase is CursedFirearmItem firearm) firearm.SetPlayerAttachments(player);
-                            }
-
-                        for (int ammo = 0; ammo < Ammos.Count; ammo++)
-                            if (Ammos.ElementAt(ammo).Value > 0)
-                                player.SetAmmo(Ammos.ElementAt(ammo).Key, Ammos.ElementAt(ammo).Value);
-                    }
-                }
-                catch (Exception e)
-                {
-                    CursedLogger.LogError("[InventoryControl] [Event: SetRankRoleItem] " + e.ToString());
                 }
             });
         }
