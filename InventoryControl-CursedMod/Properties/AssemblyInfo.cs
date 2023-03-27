@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("InventoryControl")]
-[assembly: AssemblyDescription("A plugin that will allow you to control the inventory of various roles")]
+[assembly: AssemblyDescription("A plugin that allows you to configure the default role inventory")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MrAfitol")]
 [assembly: AssemblyProduct("InventoryControl")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]

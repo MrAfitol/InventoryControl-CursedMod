@@ -1,9 +1,9 @@
-﻿using PlayerRoles;
-using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace InventoryControl_CursedMod
+﻿namespace InventoryControl_CursedMod
 {
+    using PlayerRoles;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
     public class Config
     {
         [Description("List of roles, their items, and chance (Do not add a role if you want its inventory to be normal)")]

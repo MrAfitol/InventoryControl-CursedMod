@@ -1,15 +1,15 @@
-﻿using CursedMod.Events.Handlers.Player;
-using CursedMod.Loader;
-using CursedMod.Loader.Modules;
-using CursedMod.Loader.Modules.Enums;
-
-namespace InventoryControl_CursedMod
+﻿namespace InventoryControl_CursedMod
 {
+    using CursedMod.Events.Handlers.Player;
+    using CursedMod.Loader;
+    using CursedMod.Loader.Modules;
+    using CursedMod.Loader.Modules.Enums;
+
     public class Plugin : CursedModule
     {
         public override string ModuleName => "InventoryControl";
         public override string ModuleAuthor => "MrAfitol";
-        public override string ModuleVersion => "1.0.0";
+        public override string ModuleVersion => "1.0.1";
         public override byte LoadPriority => (byte)ModulePriority.Medium;
         public override string CursedModVersion => CursedModInformation.Version;
 
